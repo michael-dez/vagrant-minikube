@@ -20,7 +20,7 @@ DSTDIR = ENV['DSTDIR'] || "/home/vagrant/data"
 GROWPART = ENV['GROWPART'] || "true"
 
 # Minikube Variables
-KUBERNETES_VERSION = ENV['KUBERNETES_VERSION'] || "1.16.3"
+KUBERNETES_VERSION = ENV['KUBERNETES_VERSION'] || "1.23.3"
 
 # Common installation script
 $installer = <<SCRIPT
@@ -31,7 +31,7 @@ sudo apt-get -y update
 sudo apt-mark hold grub
 sudo apt-mark hold grub-pc
 sudo apt-get -y upgrade
-sudo apt-get install -y zip unzip curl wget socat ebtables git vim
+sudo apt-get install -y zip unzip curl wget socat ebtables git vim conntrack
 
 SCRIPT
 
@@ -146,7 +146,7 @@ sudo echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.d/90-vm_max_map_co
 SCRIPT
 
 
-required_plugins = %w(vagrant-sshfs vagrant-vbguest vagrant-libvirt)
+required_plugins = %w(vagrant-vbguest)
 
 required_plugins.each do |plugin|
   need_restart = false
@@ -169,18 +169,18 @@ def configureVM(vmCfg, hostname, cpus, mem, srcdir, dstdir)
   # sync your laptop's development with this Vagrant VM
   vmCfg.vm.synced_folder srcdir, dstdir, type: "rsync", rsync__exclude: ".git/", create: true
 
-  # First Provider - Libvirt
-  vmCfg.vm.provider "libvirt" do |provider, override|
-    provider.memory = mem
-    provider.cpus = cpus
-    provider.driver = "kvm"
-    provider.disk_bus = "scsi"
-    provider.machine_virtual_size = 64
-    provider.video_vram = 64
+#   # First Provider - Libvirt
+#   vmCfg.vm.provider "libvirt" do |provider, override|
+#     provider.memory = mem
+#     provider.cpus = cpus
+#     provider.driver = "kvm"
+#     provider.disk_bus = "scsi"
+#     provider.machine_virtual_size = 64
+#     provider.video_vram = 64
 
 
-    override.vm.synced_folder srcdir, dstdir, type: 'sshfs', ssh_opts_append: "-o Compression=yes", sshfs_opts_append: "-o cache=no", disabled: false, create: true
-  end
+#     override.vm.synced_folder srcdir, dstdir, type: 'sshfs', ssh_opts_append: "-o Compression=yes", sshfs_opts_append: "-o cache=no", disabled: false, create: true
+#   end
 
   vmCfg.vm.provider "virtualbox" do |provider, override|
     provider.memory = mem
