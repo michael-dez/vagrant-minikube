@@ -25,21 +25,18 @@ sudo apt-get install vagrant
 * [Download Page](https://www.virtualbox.org/wiki/Downloads)
 
 
-## Run it
-
+## Run
 Clone and enter this repo, then:
-
 ```
 vagrant up
 ```
 
-## SSH into the VM
+## SSH into VM
 ```
 vagrant ssh
 ```
 
-## Check minikube is up and running
-
+## Check Status of Cluster
 ```
 kubectl get nodes
 ```
